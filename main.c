@@ -5,6 +5,7 @@ int main() {
 
 	// TODO: various classes for...
 	// dice, rolling (random num generating), directions, scorekeeping, players
+	// test...
 
 	return 0;
 }
