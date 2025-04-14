@@ -10,8 +10,8 @@
 // TODO: probably will move scoring and input validity checks into own classes
 bool valid_input(char* input, short* available, short len) {
     bool valid;
-    // short i;
-    for (short i = 0; i < len; i++) {
+    short i;
+    for (i = 0; i < len; i++) {
         printf("Validity check scanning for: %d\n", available[i]);
         char numStr[1];
         sprintf(numStr, "%d", available[i]);
@@ -22,6 +22,8 @@ bool valid_input(char* input, short* available, short len) {
         if (match != NULL) {
             printf("Substring found at position: %ld\n", match - input);
             valid = true; // TODO: this value is not holding, even for the following iteration
+            // well... after not initializing bool valid = false, it SOMETIMES holds...
+            // ah... now it only holds if it matches on the final iteration (last die needs to match input)
             printf("Set valid flag to true: %d\n", valid);
         }
         printf("Current value of valid flag: %d\n", valid);
@@ -60,7 +62,7 @@ bool valid_input(char* input, short* available, short len) {
     // Substring found at position: 0
     // Set valid flag to true: 1
     // Current value of valid flag: 1
-    // WHY ID MY VALID BOOL NOT UPDATING? OR THIS CONDITION NOT WORKING... 1
+    // WHY IS MY VALID BOOL NOT UPDATING? OR THIS CONDITION NOT WORKING... 1
     // Roll result: [1] [2] [3]
     // DICE IS VALID: 1
     // DICE IS VALID: 2
@@ -83,7 +85,7 @@ bool valid_input(char* input, short* available, short len) {
     // Current value of valid flag: 0
 
 
-    // WHY ID MY VALID BOOL NOT UPDATING? OR THIS CONDITION NOT WORKING... 0
+    // WHY IS MY VALID BOOL NOT UPDATING? OR THIS CONDITION NOT WORKING... 0
     // Input does not match any available numbers!
 
     if (!valid) {
