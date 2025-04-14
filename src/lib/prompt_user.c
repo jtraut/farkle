@@ -1,7 +1,7 @@
-#include "roll.h"
+#include "prompt_user.h"
 // Well this seems to defeat the purpose of the include path... why can't find the header file shorthand...
 #include "../include/dice_stats.h"
-#include <stdbool.h>
+// #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,10 +9,10 @@
 // Private 
 // TODO: probably will move scoring and input validity checks into own classes
 bool valid_input(char* input, short* available, short len) {
-    bool valid;
+    bool valid = false; // TODO: why is the scope of this var not working... just keeps getting reset back to false
     short i;
     for (i = 0; i < len; i++) {
-        printf("Validity check scanning for: %d\n", available[i]);
+        printf("Validity check scanning for: %d, current validity flag: %d\n", available[i], valid);
         char numStr[1];
         sprintf(numStr, "%d", available[i]);
         printf("Number as str: %s\n", numStr);
@@ -23,6 +23,7 @@ bool valid_input(char* input, short* available, short len) {
             printf("Substring found at position: %ld\n", match - input);
             valid = true; // TODO: this value is not holding, even for the following iteration
             // well... after not initializing bool valid = false, it SOMETIMES holds...
+            // jk has nothing to do with whether or not init to false, just needs to match the final die...
             // ah... now it only holds if it matches on the final iteration (last die needs to match input)
             printf("Set valid flag to true: %d\n", valid);
         }

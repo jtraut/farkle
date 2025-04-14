@@ -9,13 +9,13 @@ int main() {
 	// dice, rolling (random num generating), directions, scorekeeping, players
 	// test...
 
-	short i;
+	short i, j;
 	short* result = (short*)malloc(6 * sizeof(short));
 
 	for (i = 6; i > 0; i--) {
 		result = roll_dice(i);
 		printf("Roll result: ");
-		for (int j = 0; j < i; j++) {
+		for (j = 0; j < i; j++) {
 			printf("[%d] ", result[j]);
 		}
 		printf("\n");
