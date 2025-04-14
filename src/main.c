@@ -1,3 +1,4 @@
+#include "lib/prompt_user.h"
 #include "lib/roll.h"
 #include <stdio.h>
 
@@ -18,6 +19,7 @@ int main() {
 			printf("[%d] ", result[j]);
 		}
 		printf("\n");
+		select_dice(result);
 	}
 
 	return 0;
