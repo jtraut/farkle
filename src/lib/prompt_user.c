@@ -9,7 +9,7 @@
 // Private 
 // TODO: probably will move scoring and input validity checks into own classes
 bool valid_input(char* input, short* available, short len) {
-    bool valid = false; // TODO: why is the scope of this var not working... just keeps getting reset back to false
+    bool valid = false; // TODO: why is the scope of this var not working... just keeps getting reset back to false per iteration
     short i;
     for (i = 0; i < len; i++) {
         printf("Validity check scanning for: %d, current validity flag: %d\n", available[i], valid);
@@ -26,6 +26,9 @@ bool valid_input(char* input, short* available, short len) {
             // jk has nothing to do with whether or not init to false, just needs to match the final die...
             // ah... now it only holds if it matches on the final iteration (last die needs to match input)
             printf("Set valid flag to true: %d\n", valid);
+            // Technically don't really want this break...
+            // but for some reason our validity flag is resetting without it
+            break;
         }
         printf("Current value of valid flag: %d\n", valid);
     }
