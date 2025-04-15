@@ -19,6 +19,7 @@ int main() {
 	while (totalPoints < MIN_TO_WIN) {
 		printf("\nBeginning turn %d\n", turnCount);
 		short* dice = (short*)malloc(MAX_DICE * sizeof(short)); // TODO: probably could just allocate this once outside of loops
+		// also do need to free? It should be in use pretty much the entirety of the program lifecycle so maybe not
 		short numDiceLeft = MAX_DICE;
 		short currentTurnPoints = 0;
 		bool endTurn = false;

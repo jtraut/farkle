@@ -47,6 +47,7 @@ short remove_dice(char* selection, short* available) {
     char* selCpy = (char*)malloc(strlen(selection) + 1);
     strcpy(selCpy, selection);
     char *token = strtok(selCpy, " ");
+    // TODO: should def be freeing selCpy before end of this function
     while (token != NULL) {
         // printf("split string token: %s\n", token);
         short i = 0;
