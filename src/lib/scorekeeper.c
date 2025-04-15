@@ -21,37 +21,12 @@
     10,000 MINIMUM POINTS TO WIN (OTHER PLAYERS GET ONE MORE TURN)
 */
 
-// TODO: probably will define methods for each scoring scenario, i.e. three_of_kind, four_of_kind, etc etc
-// and once have every scenario implemented, THEN should impement a is_farkle last using them all to check each scenario first
-
-// Roll any ones or fives?
-short stay_alive(short* dice) {
-    short points = 0;
-    short i;
-    for (i = 0; i < MAX_DICE; i++) {
-        if (dice[i] == 1) {
-            points += ONE;
-            // And remove the taken die
-            dice[i] = 0;
-        } else if (dice[i] == 5) {
-            points += FIVE;
-            // And remove the taken die
-            dice[i] = 0;
-        }
-    }
-    return points;
-}
-
-short three_of_kind(short* dice) {
-    short points = 0;
-    short i;
-    // for (i = 0; i < MAX_DICE; i++) {
-
-    // }
-    return 0;
-}
+// PRIVATE
 
 short six_of_kind(short* dice) {
+    if (get_num_dice_left(dice) < 6) {
+        return 0;
+    }
     short set[MAX_DICE]; // allocate for max possible set size
     short setSize = 0;
     to_set(dice, set, &setSize);
@@ -67,11 +42,14 @@ short six_of_kind(short* dice) {
 
 // 3 pairs
 short triple_double(short* dice) {
+    if (get_num_dice_left(dice) < 6) {
+        return 0;
+    }
     short set[MAX_DICE]; // allocate for max possible set size
     short setSize = 0;
     to_set(dice, set, &setSize);
-    short mode = most_common(dice);
-    if (setSize == 3 && mode == 2) {
+    short freq = get_mode_frequency(dice);
+    if (setSize == 3 && freq == 2) {
         printf("Way to go, you got a triple double!\n");
         reset_dice(dice);
         return TRIPLE_DOUBLE;
@@ -81,11 +59,14 @@ short triple_double(short* dice) {
 
 // 2 triplets
 short double_triplet(short* dice) {
+    if (get_num_dice_left(dice) < 6) {
+        return 0;
+    }
     short set[MAX_DICE]; // allocate for max possible set size
     short setSize = 0;
     to_set(dice, set, &setSize);
-    short mode = most_common(dice);
-    if (setSize == 2 && mode == 3) {
+    short freq = get_mode_frequency(dice);
+    if (setSize == 2 && freq == 3) {
         printf("Congrats on your double triplets!\n");
         reset_dice(dice);
         return DOUBLE_TRIPLET;
@@ -95,6 +76,9 @@ short double_triplet(short* dice) {
 
 // 1-6 straight
 short straight(short* dice) {
+    if (get_num_dice_left(dice) < 6) {
+        return 0;
+    }
     short set[MAX_DICE]; // allocate for max possible set size
     short setSize = 0;
     to_set(dice, set, &setSize);
@@ -108,17 +92,127 @@ short straight(short* dice) {
 
 // Pretty self explanatory
 short four_kind_with_pair(short* dice) {
+    if (get_num_dice_left(dice) < 6) {
+        return 0;
+    }
     short set[MAX_DICE]; // allocate for max possible set size
     short setSize = 0;
     to_set(dice, set, &setSize);
-    short mode = most_common(dice);
-    if (setSize == 2 && mode == 4) {
+    short freq = get_mode_frequency(dice);
+    if (setSize == 2 && freq == 4) {
         printf("Is it skill or luck? Nice four of a kind plus a pair.\n");
         reset_dice(dice);
         return FOUR_KIND_PAIR;
     }
     return 0;
 }
+
+short five_of_kind(short* dice) {
+    if (get_num_dice_left(dice) < 5) {
+        return 0;
+    }
+    short freq = get_mode_frequency(dice);
+    if (freq == 5) {
+        printf("High five! That's five of a kind.\n");
+        short mode = get_mode(dice);
+        for (short i = 0; i < MAX_DICE; i++) {
+            if (dice[i] == mode) {
+                dice[i] = 0;
+            }
+        }
+        return FIVE_KIND;
+    }
+    return 0;
+}
+
+short four_of_kind(short* dice) {
+    if (get_num_dice_left(dice) < 4) {
+        return 0;
+    }
+    short freq = get_mode_frequency(dice);
+    if (freq == 4) {
+        printf("Booyah! That's four of a kind.\n");
+        short mode = get_mode(dice);
+        for (short i = 0; i < MAX_DICE; i++) {
+            if (dice[i] == mode) {
+                dice[i] = 0;
+            }
+        }
+        return FOUR_KIND;
+    }
+    return 0;
+}
+
+short three_of_kind(short* dice) {
+    if (get_num_dice_left(dice) < 3) {
+        return 0;
+    }
+    short freq = get_mode_frequency(dice);
+    if (freq == 3) {
+        printf("Nice three of a kind!\n");
+        short mode = get_mode(dice);
+        for (short i = 0; i < MAX_DICE; i++) {
+            if (dice[i] == mode) {
+                dice[i] = 0;
+            }
+        }
+        if (mode == 1) {
+            return 300;
+        }
+        // TODO: might want to re-evaluate how auto score if have three 2's
+        // because often times better off just taking a 1 or 5 if have any available
+        return 100 * mode;
+    }
+    return 0;
+}
+
+// Ones or fives to stay alive!
+short ones_or_fives(short* dice) {
+    short points = 0;
+    for (short i = 0; i < MAX_DICE; i++) {
+        if (dice[i] == 1) {
+            points += ONE;
+            // And remove the taken die
+            dice[i] = 0;
+        } else if (dice[i] == 5) {
+            points += FIVE;
+            // And remove the taken die
+            dice[i] = 0;
+        }
+    }
+    return points;
+}
+
+short score_three_dice(short* dice) {
+    short points = three_of_kind(dice);
+    // TODO: maybe reconsider how want to handle taking the ones and fives
+    points += ones_or_fives(dice);
+    return points;
+}
+
+short score_four_dice(short* dice) {
+    short points = four_of_kind(dice);
+    points += score_three_dice(dice);
+    return points;
+}
+
+short score_five_dice(short* dice) {
+    short points = five_of_kind(dice);
+    points += score_four_dice(dice);
+    return points;
+}
+
+short score_six_dice(short* dice) {
+    short points = six_of_kind(dice);
+    points += double_triplet(dice);
+    points += triple_double(dice);
+    points += straight(dice);
+    points += four_kind_with_pair(dice);
+    points += score_five_dice(dice);
+    return points;
+}
+
+// PUBLIC
 
 // Auto score for any 6 or full hand dice matches or FARKLES
 // TODO: either need to have auto_score keep track of numDiceLeft (pass by ref) or 
@@ -137,65 +231,34 @@ short auto_score(short* dice) {
 
     switch (numDice) {
         case 3:
-            points = three_of_kind(dice);
-            if (points == 0) {
-                points = stay_alive(dice);
-            }
+            points = score_three_dice(dice);
             break;
         case 4:
+            points = score_four_dice(dice);
             break;
         case 5:
+            points = score_five_dice(dice);
             break;
         case 6:
-            // Could only possibly have one of these 6 dice combos
-            // So just try them all without checking the points
-            // TODO: Might even break this down more to methods for score_six, score_five, score_four etc.
-            points = six_of_kind(dice);
-            points += double_triplet(dice);
-            points += triple_double(dice);
-            points += straight(dice);
-            points += four_kind_with_pair(dice);
-            
-            // TODO: check pretty much everything...
+            points = score_six_dice(dice);
             break;
         default:
             // One or two dice
             printf("Auto scoring for two or less dice left.\n");
             // Technically if rolled two 5's could just take one in hopes of rolling a 1 next, but that would be ill-advised vs. hot hand
-            points = stay_alive(dice);
+            points = ones_or_fives(dice);
             break;
     }
-
-    // Check for complete matches w/ 3 or more dice
-    // if (numDice >= 3) {
-    //     printf("Checking for a complete match...\n");
-    //     i = 0;
-    //     while (dice[i] == 0) {
-    //         // Get the first valid die
-    //         i++;
-    //     }
-    //     printf("First valid die at index: %d\n", i);
-    //     short j = i + 1;
-    //     while ((dice[i] == dice[j] || dice[j] == 0) && j < MAX_DICE) {
-    //         j++;
-    //     }
-    //     if (j == MAX_DICE) {
-    //         printf("ALL AVAILABLE DICE MATCH, CONGRATS!\n");
-    //         // TODO: still need to determine score
-    //         return 1000; // just a temp val cause why not
-    //     } else {
-    //         printf("First non-matching die at: %d\n", j);
-    //     }        
-    // }
     
+    // TODO: in the case of maybe wanting to save some dice like not picking a single 5
+    // maybe cancel the auto score if not able to score all remaining dice 
     return points;
 }
 
 short score_selection(char* selection) {
     // First check if any of the selection can be auto-scored
     // By first converting the selected dice to int array
-    short selectionAsNums[6] = {0, 0, 0, 0, 0, 0};
-    // TODO: ahh crap think this is screwing up selection for later usage tho
+    short selectionAsNums[MAX_DICE] = {0, 0, 0, 0, 0, 0};
     char* selCpy = (char*)malloc(strlen(selection) + 1);
     strcpy(selCpy, selection);
     char *token = strtok(selCpy, " ");
@@ -211,6 +274,9 @@ short score_selection(char* selection) {
         // Easy score
         return points;
     }
+    // TODO: now that auto score is pretty flushed out...
+    // does this even matter anymore...? might be able to remove everything below, or close to it
+    printf("Score selection didn't get points from auto score attempt...");
     // Individually add up or whatev
     for (i = 0; i < MAX_DICE; i++) {
         printf("attempting to score %d at index %d\n", selectionAsNums[i], i);

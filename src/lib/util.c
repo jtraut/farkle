@@ -56,8 +56,10 @@ short get_num_dice_left(short* dice) {
     return numDice;
 }
 
-short most_common(short* nums) {
-    // Two assumptions, working with length 6 and don't count zeros
+// Get the most common value
+short get_mode(short* nums) {
+    // assume working with length 6
+    // and don't count zeroes
     short maxCount = 0;
     short mostCommon = nums[0];
     for (short i = 0; i < MAX_DICE; i++) {
@@ -75,6 +77,19 @@ short most_common(short* nums) {
         }
     }
     return mostCommon;
+}
+
+// How many times does the most frequent number occur
+short get_mode_frequency(short* nums) {
+    // assume working with length 6
+    short freq = 0;
+    short mode = get_mode(nums);
+    for (short i = 0; i < MAX_DICE; i++) {
+        if (nums[i] == mode) {
+            freq++;
+        }
+    }
+    return freq;
 }
 
 // Convert int array to "set"
