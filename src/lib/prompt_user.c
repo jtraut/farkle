@@ -1,6 +1,7 @@
 #include "prompt_user.h"
 // Well this seems to defeat the purpose of the include path... why can't find the header file shorthand...
 #include "../include/dice_stats.h"
+#include "util.h"
 // #include <stdbool.h> # Currently in header
 #include <stdio.h>
 #include <stdlib.h>
@@ -107,4 +108,21 @@ char* select_dice(short* available) {
     }
     strcpy(inputStr, input);
     return inputStr;
+}
+
+bool yes_no() {
+    char input[10]; // Little extra mem space to be safer from a-holes
+    printf("Please enter Y/N: ");
+    scanf("%s", input);
+    to_uppercase(input);
+    while (!strcmp("Y\n", input) && !strcmp("N\n", input) && !strcmp("YES\n", input) && !strcmp("NO\n", input)) {
+        printf("Invalid YES/NO input! Try again...\n");
+        printf("Previous input: %s", input);
+        scanf("%s", input);
+        to_uppercase(input);
+    }
+    if (strcmp("Y\n", input) || strcmp("YES\n", input)) {
+        return true;
+    }
+    return false;
 }

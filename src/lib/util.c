@@ -106,3 +106,12 @@ void to_set(short nums[], short set[], short *setSize) {
     // }
     // printf("\n");
 }
+
+void to_uppercase(char* str) {
+    if (str == NULL) {
+        return;
+    }
+    for (short i = 0; str[i] != '\0'; i++) {
+        str[i] = toupper(str[i]);
+    }
+}

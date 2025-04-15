@@ -5,43 +5,34 @@
 #include "lib/util.h"
 #include <stdbool.h>
 #include <stdio.h>
-// #include <unistd.h>
+// #include <unistd.h> // Unix only, but running on Windows so...
+#include <windows.h>
+#define sleep(x) Sleep(1000 * (x));
 
 int main() {
 	printf("FARKLE DICE GAME\n");
 
 	// TODO: Support multiple players, add more game instructions, and maintain a leaderboard
 
-	short turnCount = 0;
+	short turnCount = 1;
 	short totalPoints = 0; // eventually will be an array per player
 	while (totalPoints < MIN_TO_WIN) {
-		short* dice = (short*)malloc(MAX_DICE * sizeof(short));
+		printf("Beginning turn %d\n", turnCount);
+		short* dice = (short*)malloc(MAX_DICE * sizeof(short)); // TODO: probably could just allocate this once outside of loops
 		short numDiceLeft = MAX_DICE;
 		short currentTurnPoints = 0;
 		bool endTurn = false;
 		while (!endTurn) {
-			srand(time(NULL)); // Once added the double loop, not getting random rolls anymore... only repeating...
+			sleep(2); // Slight delay before rolls for more authentic feel
 			// TODO: should dice just be passed by ref?
-			// TODO: somehow it seems when moved dice array creation into the totalPoints while loop, now only get repeated identical rolls
-			// short* dice = (short*)malloc(MAX_DICE * sizeof(short));
 			dice = roll_dice(numDiceLeft);
+			printf("\n");
 			print_dice(dice);
-			// TODO: think need to pass numDiceLeft by reference to auto_score as well
-			// to handle various cases of auto scoring points but still having dice leftover 
 			short points = auto_score(dice);
 			currentTurnPoints += points;
 			if (points > 0) {
 				printf("Your roll scored %d points.\n", points);
 				numDiceLeft = get_num_dice_left(dice);
-				if (numDiceLeft == 0) {
-					printf("Would you like to keep rolling with a hot-hand (6 dice) OR stop now and take your current turn points %d\n", currentTurnPoints);
-					// TODO: prompt a Y/N input (will define in prompt_user)
-					// Right now just assume hot hand I guess
-					numDiceLeft = 6;				
-				} else if (numDiceLeft <= 3) {
-					// For now will just stick to mostly automated play lol
-					endTurn = true;
-				}
 			} else {
 				// TODO: need to modify some things about how handle auto scoring
 				// right now probably will never hit this because auto score will just take whatever it can get
@@ -55,20 +46,37 @@ int main() {
 				currentTurnPoints = 0; // :(
 			}
 			printf("************************************************\n");
-			if (numDiceLeft > 0) {
-				printf("Current turn %d total points: %d with %d dice left\n", turnCount, currentTurnPoints, numDiceLeft);
-				// TODO: could be a good time to prompt user if they want to keep rolling
-			} else if (currentTurnPoints == 0) {
-				printf("Oof, turn ended in a Farkle...\n");
+			if (currentTurnPoints == 0) {
+				printf("Oof, turn ended in a Farkle...\n\n");
 				endTurn = true;
+			} else if (numDiceLeft > 0) {
+				printf("Current turn %d total points: %d with %d dice left\n", turnCount, currentTurnPoints, numDiceLeft);
+				printf("Enter Y if you would like to continue rolling, or N to end turn now and take current points.\n");
+				if (totalPoints < 500) {
+					printf("Reminder, a minimum of %d points is required to get on the scoreboard!\nAfter which, welcome to take any amount of points.\n", MIN_ON_BOARD);
+				}
+				endTurn = !yes_no();
+				printf("End turn flag after yes no prompt: %d", endTurn);
+			} else {
+				// Decide on hot hand or not
+				printf("Would you like to keep rolling with a hot-hand (6 dice) OR stop now and take your current turn points %d\n", currentTurnPoints);
+				printf("Please enter Y if want to continue rolling with a hot-hand, or N to end turn.\n");
+				if (yes_no()) {
+					numDiceLeft = 6;
+				} else {
+					endTurn = true;
+				}
 			}
 			if (endTurn) {
 				// TODO: print leaderboard method
-				totalPoints += currentTurnPoints;
+				if (totalPoints >= 500 || currentTurnPoints >= 500) {
+					totalPoints += currentTurnPoints;
+				} else if (currentTurnPoints > 0 && currentTurnPoints < 500) {
+					printf("Sorry, not enough points to get on the scoreboard!\n");
+				}
 				printf("Current overall total points: %d\n", totalPoints);
+				
 			}
-			// sleep(1); // TODO: really just trying to figure out why RNG stopped working... just getting repeat rolls now
-			// Something similar happened last time was using bools in a loop, so what the hell try removing that
 		}
 		turnCount++;
 	}

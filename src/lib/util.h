@@ -13,4 +13,6 @@ short get_mode_frequency(short* nums);
 
 void to_set(short nums[], short set[], short *setSize);
 
+void to_uppercase(char* str);
+
 #endif
