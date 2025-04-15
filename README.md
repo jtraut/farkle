@@ -9,7 +9,9 @@ Compiled with VS Code build task (tasks.json).
 Clone / Fork repo.
 
 Open in VS Code and enter `Ctrl+Shift+B` to build the project.
+
     - Note this was implemented & compiled on Windows machine, minor changes like header include `#include <unistd.h>`
+    
       may be required to run successfully on Linux etc.
 
 Run the main.exe in preferred terminal or directly in VS Code:
