@@ -115,13 +115,13 @@ bool yes_no() {
     printf("Please enter Y/N: ");
     scanf("%s", input);
     to_uppercase(input);
-    while (!strcmp("Y\n", input) && !strcmp("N\n", input) && !strcmp("YES\n", input) && !strcmp("NO\n", input)) {
+    while (strcmp("Y", input) != 0 && strcmp("N", input) != 0 && strcmp("YES", input) != 0 && strcmp("NO", input) != 0) {
         printf("Invalid YES/NO input! Try again...\n");
-        printf("Previous input: %s", input);
+        printf("Previous input: %s\n", input);
         scanf("%s", input);
         to_uppercase(input);
     }
-    if (strcmp("Y\n", input) || strcmp("YES\n", input)) {
+    if (!strcmp("Y", input) || !strcmp("YES", input)) {
         return true;
     }
     return false;

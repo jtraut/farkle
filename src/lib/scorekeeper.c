@@ -225,9 +225,6 @@ short auto_score(short* dice) {
     }
     printf("Current number of dice being scored: %d\n", numDice);
     short points = 0;
-    // TODO: maybe eventually switch statement on numDice
-    // and have methods pre-defined for how to handle each number range differently
-
     switch (numDice) {
         case 3:
             points = score_three_dice(dice);
@@ -248,13 +245,7 @@ short auto_score(short* dice) {
             points = ones_or_fives(dice);
             break;
     }
-    
-    // TODO: in the case of maybe wanting to save some dice like not picking a single 5
-    // maybe cancel the auto score if not able to score all remaining dice
-    // TODO: also, do need to define a farkle checker or could just suffice right here...
-    if (points == 0) {
-        printf("Oh no, you Farkled!\n");
-    }
+    // 0 points implies farkle
     return points;
 }
 

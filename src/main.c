@@ -47,7 +47,7 @@ int main() {
 			}
 			printf("************************************************\n");
 			if (currentTurnPoints == 0) {
-				printf("Oof, turn ended in a Farkle...\n\n");
+				printf("Oh no, you Farkled!\n\n");
 				endTurn = true;
 			} else if (numDiceLeft > 0) {
 				printf("Current turn %d total points: %d with %d dice left\n", turnCount, currentTurnPoints, numDiceLeft);
@@ -56,7 +56,6 @@ int main() {
 					printf("Reminder, a minimum of %d points is required to get on the scoreboard!\nAfter which, welcome to take any amount of points.\n", MIN_ON_BOARD);
 				}
 				endTurn = !yes_no();
-				printf("End turn flag after yes no prompt: %d", endTurn);
 			} else {
 				// Decide on hot hand or not
 				printf("Would you like to keep rolling with a hot-hand (6 dice) OR stop now and take your current turn points %d\n", currentTurnPoints);
@@ -75,7 +74,6 @@ int main() {
 					printf("Sorry, not enough points to get on the scoreboard!\n");
 				}
 				printf("Current overall total points: %d\n", totalPoints);
-				
 			}
 		}
 		turnCount++;
