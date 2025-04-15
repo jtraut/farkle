@@ -1,6 +1,7 @@
 #include "scorekeeper.h"
 // Well this seems to defeat the purpose of the include path... why can't find the header file shorthand...
 #include "../include/dice_stats.h"
+#include "util.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -30,8 +31,12 @@ short stay_alive(short* dice) {
     for (i = 0; i < MAX_DICE; i++) {
         if (dice[i] == 1) {
             points += ONE;
+            // And remove the taken die
+            dice[i] = 0;
         } else if (dice[i] == 5) {
             points += FIVE;
+            // And remove the taken die
+            dice[i] = 0;
         }
     }
     return points;
@@ -40,22 +45,88 @@ short stay_alive(short* dice) {
 short three_of_kind(short* dice) {
     short points = 0;
     short i;
-    for (i = 0; i < MAX_DICE; i++) {
-        
+    // for (i = 0; i < MAX_DICE; i++) {
+
+    // }
+    return 0;
+}
+
+short six_of_kind(short* dice) {
+    short set[MAX_DICE]; // allocate for max possible set size
+    short setSize = 0;
+    to_set(dice, set, &setSize);
+    // printf("Resulting set size: %d\n", setSize);
+    if (setSize == 1) {
+        // Only have 1 value!
+        printf("Lucky bastard got a 6 of a kind!\n");
+        reset_dice(dice);
+        return SIX_KIND;
     }
+    return 0;
+}
+
+// 3 pairs
+short triple_double(short* dice) {
+    short set[MAX_DICE]; // allocate for max possible set size
+    short setSize = 0;
+    to_set(dice, set, &setSize);
+    short mode = most_common(dice);
+    if (setSize == 3 && mode == 2) {
+        printf("Way to go, you got a triple double!\n");
+        reset_dice(dice);
+        return TRIPLE_DOUBLE;
+    }
+    return 0;
+}
+
+// 2 triplets
+short double_triplet(short* dice) {
+    short set[MAX_DICE]; // allocate for max possible set size
+    short setSize = 0;
+    to_set(dice, set, &setSize);
+    short mode = most_common(dice);
+    if (setSize == 2 && mode == 3) {
+        printf("Congrats on your double triplets!\n");
+        reset_dice(dice);
+        return DOUBLE_TRIPLET;
+    }
+    return 0;
+}
+
+// 1-6 straight
+short straight(short* dice) {
+    short set[MAX_DICE]; // allocate for max possible set size
+    short setSize = 0;
+    to_set(dice, set, &setSize);
+    if (setSize == 6) {
+        printf("Look at you go, straight to winning!\n");
+        reset_dice(dice);
+        return STRAIGHT;
+    }
+    return 0;
+}
+
+// Pretty self explanatory
+short four_kind_with_pair(short* dice) {
+    short set[MAX_DICE]; // allocate for max possible set size
+    short setSize = 0;
+    to_set(dice, set, &setSize);
+    short mode = most_common(dice);
+    if (setSize == 2 && mode == 4) {
+        printf("Is it skill or luck? Nice four of a kind plus a pair.\n");
+        reset_dice(dice);
+        return FOUR_KIND_PAIR;
+    }
+    return 0;
 }
 
 // Auto score for any 6 or full hand dice matches or FARKLES
+// TODO: either need to have auto_score keep track of numDiceLeft (pass by ref) or 
+// make sure it's always updating the used dice to 0 so main or whatever caller knows how many dice have left after receiving points
 short auto_score(short* dice) {
     // First get number of active dice
-    short numDice = 0;
-    short i;
-    for (i = 0; i < MAX_DICE; i++) {
-        if (dice[i] > 0 && dice[i] <= 6) {
-            // VALID DIE
-            numDice++;
-        }
-    }
+    short numDice = get_num_dice_left(dice);
+    // TODO: OR farkle (after implemented)
     if (numDice == 0) {
         return 0;
     }
@@ -63,34 +134,61 @@ short auto_score(short* dice) {
     short points = 0;
     // TODO: maybe eventually switch statement on numDice
     // and have methods pre-defined for how to handle each number range differently
-    if (numDice <= 2) {
-        // Technically if rolled two 5's could just take one in hopes of rolling a 1 next, but that would be ill-advised vs. hot hand
-        printf("Auto scoring for two or less dice left.");
-        return stay_alive(dice);
+
+    switch (numDice) {
+        case 3:
+            points = three_of_kind(dice);
+            if (points == 0) {
+                points = stay_alive(dice);
+            }
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        case 6:
+            // Could only possibly have one of these 6 dice combos
+            // So just try them all without checking the points
+            // TODO: Might even break this down more to methods for score_six, score_five, score_four etc.
+            points = six_of_kind(dice);
+            points += double_triplet(dice);
+            points += triple_double(dice);
+            points += straight(dice);
+            points += four_kind_with_pair(dice);
+            
+            // TODO: check pretty much everything...
+            break;
+        default:
+            // One or two dice
+            printf("Auto scoring for two or less dice left.\n");
+            // Technically if rolled two 5's could just take one in hopes of rolling a 1 next, but that would be ill-advised vs. hot hand
+            points = stay_alive(dice);
+            break;
     }
+
     // Check for complete matches w/ 3 or more dice
-    if (numDice >= 3) {
-        printf("Checking for a complete match...\n");
-        i = 0;
-        while (dice[i] == 0) {
-            // Get the first valid die
-            i++;
-        }
-        printf("First valid die at index: %d\n", i);
-        short j = i + 1;
-        while ((dice[i] == dice[j] || dice[j] == 0) && j < MAX_DICE) {
-            j++;
-        }
-        if (j == MAX_DICE) {
-            printf("ALL AVAILABLE DICE MATCH, CONGRATS!\n");
-            // TODO: still need to determine score
-            return 1000; // just a temp val cause why not
-        } else {
-            printf("First non-matching die at: %d\n", j);
-        }        
-    }
+    // if (numDice >= 3) {
+    //     printf("Checking for a complete match...\n");
+    //     i = 0;
+    //     while (dice[i] == 0) {
+    //         // Get the first valid die
+    //         i++;
+    //     }
+    //     printf("First valid die at index: %d\n", i);
+    //     short j = i + 1;
+    //     while ((dice[i] == dice[j] || dice[j] == 0) && j < MAX_DICE) {
+    //         j++;
+    //     }
+    //     if (j == MAX_DICE) {
+    //         printf("ALL AVAILABLE DICE MATCH, CONGRATS!\n");
+    //         // TODO: still need to determine score
+    //         return 1000; // just a temp val cause why not
+    //     } else {
+    //         printf("First non-matching die at: %d\n", j);
+    //     }        
+    // }
     
-    return 0; // Either a Farkle or up to player decision
+    return points;
 }
 
 short score_selection(char* selection) {

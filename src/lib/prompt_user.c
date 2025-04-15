@@ -47,15 +47,15 @@ short remove_dice(char* selection, short* available) {
     strcpy(selCpy, selection);
     char *token = strtok(selCpy, " ");
     while (token != NULL) {
-        printf("split string token: %s\n", token);
+        // printf("split string token: %s\n", token);
         short i = 0;
         // TODO: validation check...
         short removeNum = atoi(token);
         while (removeNum != available[i] && i < 6) {
-            printf("Remove number: %d doesn't match %d for index %d\n", removeNum, available[i], i);
+            // printf("Remove number: %d doesn't match %d for index %d\n", removeNum, available[i], i);
             i++;
         }
-        printf("Maybe time to replace available num %d at index %d\n", available[i], i);
+        // printf("Maybe time to replace available num %d at index %d\n", available[i], i);
         available[i] = 0;
         token = strtok(NULL, " ");
     }
@@ -102,7 +102,7 @@ char* select_dice(short* available) {
     // Now copy the input to a safe to return string
     char *inputStr = (char*)malloc(strlen(input) + 1);
     if (inputStr == NULL) {
-        perror("Failed to allocate memory for the input string!");
+        perror("Failed to allocate memory for the input string!\n");
         return NULL; // TODO: need to handle...
     }
     strcpy(inputStr, input);
