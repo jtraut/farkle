@@ -50,7 +50,7 @@ short triple_double(short* dice) {
     to_set(dice, set, &setSize);
     short freq = get_mode_frequency(dice);
     if (setSize == 3 && freq == 2) {
-        printf("Way to go, you got a triple double!\n");
+        printf("Way to go all-star, you got a triple double!\n");
         reset_dice(dice);
         return TRIPLE_DOUBLE;
     }

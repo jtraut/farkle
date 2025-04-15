@@ -17,7 +17,7 @@ int main() {
 	short turnCount = 1;
 	short totalPoints = 0; // eventually will be an array per player
 	while (totalPoints < MIN_TO_WIN) {
-		printf("Beginning turn %d\n", turnCount);
+		printf("\nBeginning turn %d\n", turnCount);
 		short* dice = (short*)malloc(MAX_DICE * sizeof(short)); // TODO: probably could just allocate this once outside of loops
 		short numDiceLeft = MAX_DICE;
 		short currentTurnPoints = 0;
