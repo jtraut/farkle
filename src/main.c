@@ -79,7 +79,8 @@ int main() {
 		turnCount++;
 	}
 
-	printf("Congrats player X won with %d points in %d turns", totalPoints, turnCount);
+	// Subtract a turn for the final iteration before exiting while loop
+	printf("Congrats player X won with %d points in %d turns", totalPoints, turnCount-1);
 
 	return 0;
 }
