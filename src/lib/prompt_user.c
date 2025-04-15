@@ -1,7 +1,7 @@
 #include "prompt_user.h"
 // Well this seems to defeat the purpose of the include path... why can't find the header file shorthand...
 #include "../include/dice_stats.h"
-// #include <stdbool.h>
+// #include <stdbool.h> # Currently in header
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

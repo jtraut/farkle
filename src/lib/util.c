@@ -39,7 +39,7 @@ void print_dice(short* dice) {
 }
 
 void reset_dice(short* dice) {
-    printf("Resetting all dice to zero (cleared the board)!");
+    printf("Resetting all dice to zero (cleared the board)!\n");
     for (short i = 0; i < MAX_DICE; i++) {
         dice[i] = 0;
     }

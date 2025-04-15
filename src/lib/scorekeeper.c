@@ -220,7 +220,6 @@ short score_six_dice(short* dice) {
 short auto_score(short* dice) {
     // First get number of active dice
     short numDice = get_num_dice_left(dice);
-    // TODO: OR farkle (after implemented)
     if (numDice == 0) {
         return 0;
     }
@@ -251,7 +250,11 @@ short auto_score(short* dice) {
     }
     
     // TODO: in the case of maybe wanting to save some dice like not picking a single 5
-    // maybe cancel the auto score if not able to score all remaining dice 
+    // maybe cancel the auto score if not able to score all remaining dice
+    // TODO: also, do need to define a farkle checker or could just suffice right here...
+    if (points == 0) {
+        printf("Oh no, you Farkled!\n");
+    }
     return points;
 }
 

@@ -22,6 +22,7 @@
 
     10,000 MINIMUM POINTS TO WIN (OTHER PLAYERS GET ONE MORE TURN)
 */
+
 #define FIVE 50
 #define ONE 100
 #define TRIPLE_ONE 300
@@ -37,5 +38,8 @@
 #define TRIPLE_DOUBLE 1500
 #define DOUBLE_TRIPLET 2500
 #define FOUR_KIND_PAIR 1500
+
+#define MIN_ON_BOARD 500
+#define MIN_TO_WIN 10000
 
 #endif
