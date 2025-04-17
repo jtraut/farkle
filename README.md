@@ -19,6 +19,10 @@ Run the main.exe in preferred terminal or directly in VS Code:
 jaket@DESKTOP-MIR3S3C MINGW64 ~/Workspace/farkle (main)
 $ ./src/main.exe
 ```
+Or to set the player count to 4 and fully auto flag to disable user prompting
+```
+./main.exe 4 auto
+```
 
 ## Example output (of a pretty stellar start):
 ```
